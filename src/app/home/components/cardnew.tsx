@@ -1,6 +1,6 @@
 "use client";
-import React from "react";
-
+import React, { useState, useEffect } from "react";
+import axios from 'axios';
 import { CornerUpRight, CornerUpLeft, ArrowUp, CircleArrowUp, CloudSunRain, TriangleAlert, AlertTriangle } from "lucide-react";
 
 interface TrafficWidgetProps {
@@ -13,6 +13,11 @@ interface Direction {
   direction: string;
   to: string;
   iconType: React.ElementType;
+}
+
+interface WeatherData {
+  temperature: number;
+  apparent_temperature: number;
 }
 
 export const trafficDirectionData: Direction[] = [
@@ -41,6 +46,55 @@ export const trafficDirectionData: Direction[] = [
     iconType: ArrowUp,
   },
 ];
+
+const fetchWeatherData = async (latitude: number, longitude: number): Promise<WeatherData | null> => {
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`;
+
+  try {
+    const response = await axios.get(url);
+    return response.data.current_weather;
+  } catch (error) {
+    console.error("Error fetching weather data:", error);
+    return null;
+  }
+};
+
+const WeatherWidget: React.FC<{ latitude: number; longitude: number }> = ({ latitude, longitude }) => {
+  const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const getWeather = async () => {
+      const data = await fetchWeatherData(latitude, longitude);
+      setWeatherData(data);
+      setLoading(false);
+    };
+
+    getWeather();
+  }, [latitude, longitude]);
+
+  if (loading) {
+    return <div>Loading weather data...</div>;
+  }
+
+  if (!weatherData) {
+    return <div>Error fetching weather data.</div>;
+  }
+
+  return (
+    <div className="flex flex-col rounded-lg bg-white p-4 shadow-lg">
+      <div className="flex flex-col gap-2 text-gray-800">
+        <p className="opacity-70">Location</p>
+        <div className="flex items-center">
+          <CloudSunRain className="h-10 w-10 text-blue-500" />
+          <p className="text-5xl font-black">{weatherData.temperature}°</p>
+        </div>
+        <p className="opacity-70">Feels like {weatherData.apparent_temperature}°</p>
+      </div>
+      {/* You can add more weather details here as needed */}
+    </div>
+  );
+};
 
 const TrafficWidget: React.FC<TrafficWidgetProps> = ({ directionValues = trafficDirectionData, duration = 5000 }) => {
   const [currentIndex, setCurrentIndex] = React.useState(0);
@@ -117,6 +171,10 @@ export default function KnowYourLocalitySection() {
     accidentTime = "15m",
     numberOfAccidents = 3;
 
+  // Example coordinates for Tokyo
+  const latitude = 35.682839; // Tokyo Latitude
+  const longitude = 139.759455; // Tokyo Longitude
+
   return (
     <section className="py-16 bg-yellow-100 text-gray-800">
       <div className="container mx-auto px-4">
@@ -125,27 +183,7 @@ export default function KnowYourLocalitySection() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Weather Widget */}
-          <div className="flex flex-col rounded-lg bg-white p-4 shadow-lg">
-            <div className="flex flex-col gap-2 text-gray-800">
-              <p className="opacity-70">Tokyo</p>
-              <div className="flex items-center">
-                <CloudSunRain className="h-10 w-10 text-blue-500" />
-                <p className="text-5xl font-black">19&deg;</p>
-              </div>
-              <p className="opacity-70">Feels like 21&deg;</p>
-            </div>
-            <div className="flex justify-between rounded-lg bg-gray-200 py-1 mt-2">
-              <div className="flex items-center gap-1 px-2 text-orange-500">
-                <CircleArrowUp className="h-5 w-5" />
-                24&deg;
-              </div>
-              <p className="text-gray-500">|</p>
-              <div className="flex items-center gap-1 px-3 text-green-800">
-                <CircleArrowUp className="h-5 w-5 rotate-180" />
-                9&deg;
-              </div>
-            </div>
-          </div>
+          <WeatherWidget latitude={latitude} longitude={longitude} />
 
           {/* Security Alert Widget */}
           <div className="flex flex-col rounded-lg bg-red-900 p-4 shadow-lg">
@@ -185,4 +223,4 @@ export default function KnowYourLocalitySection() {
       </div>
     </section>
   );
-}
+}  

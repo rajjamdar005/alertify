@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation'; // Import useRouter hook
 
 const LocateIncident: React.FC = () => {
   const [name, setName] = useState('');
@@ -7,6 +8,9 @@ const LocateIncident: React.FC = () => {
   const [incident, setIncident] = useState('');
   const [description, setDescription] = useState('');
   const [photo, setPhoto] = useState<File | null>(null);
+  const [loading, setLoading] = useState(false); // State to manage loading
+  const [error, setError] = useState<string | null>(null); // State to manage error
+  const router = useRouter(); // Create router instance for redirection
 
   const handleClearForm = () => {
     setName('');
@@ -14,20 +18,42 @@ const LocateIncident: React.FC = () => {
     setIncident('');
     setDescription('');
     setPhoto(null);
+    setError(null); // Clear any previous errors
   };
-
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    // Handle form submission logic here
-    console.log({
-      name,
-      number,
-      incident,
-      description,
-      photo,
-    });
-    handleClearForm(); // Clear the form after submission
+  
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('number', number);
+    formData.append('incident', incident);
+    formData.append('description', description);
+    if (photo) {
+      formData.append('photo', photo);
+    }
+  
+    try {
+      setLoading(true); // Set loading to true when submission starts
+      const response = await fetch('http://localhost:5000/api/incidents', {
+        method: 'POST',
+        body: formData,
+      });
+  
+      if (response.ok) {
+        console.log('Incident reported successfully!');
+        handleClearForm();
+      } else {
+        const errorText = await response.text();
+        setError(`Failed to report incident: ${errorText}`);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setError('An unexpected error occurred.');
+    } finally {
+      setLoading(false); // Reset loading state after submission
+    }
   };
+  
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -111,6 +137,12 @@ const LocateIncident: React.FC = () => {
           />
         </div>
 
+        {error && (
+          <div className="mb-6 p-4 bg-red-100 text-red-700 border border-red-400 rounded-lg">
+            {error}
+          </div>
+        )}
+
         <div className="flex justify-between mt-6">
           <button
             type="button"
@@ -121,9 +153,10 @@ const LocateIncident: React.FC = () => {
           </button>
           <button
             type="submit"
-            className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+            className={`px-6 py-3 ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-indigo-600 text-white rounded-lg hover:bg-indigo-700'} transition-colors`}
+            disabled={loading}
           >
-            Submit
+            {loading ? 'Submitting...' : 'Submit'}
           </button>
         </div>
       </form>

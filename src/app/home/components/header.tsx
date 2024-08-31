@@ -39,7 +39,7 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-white shadow-md">
+    <header className="bg-white  shadow-md">
       <nav className="flex items-center justify-between px-6 py-4 max-w-screen-xl mx-auto">
         {/* Left side */}
         <div className="flex items-center space-x-4">

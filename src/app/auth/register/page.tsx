@@ -32,7 +32,7 @@ const SignUp: React.FC = () => {
         createdAt: new Date(),
       });
 
-      router.push('/home');
+      router.push('/auth/form');
     } catch (err: any) {
       setError(err.message);
     }
@@ -55,7 +55,7 @@ const SignUp: React.FC = () => {
         });
       }
 
-      router.push('/home');
+      router.push('/auth/form');
     } catch (err: any) {
       setError(err.message);
     }

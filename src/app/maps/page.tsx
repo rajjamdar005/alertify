@@ -1,4 +1,6 @@
+"use client";
 import React, { useEffect, useRef, useState } from 'react';
+
 
 const LocationCapture: React.FC = () => {
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);

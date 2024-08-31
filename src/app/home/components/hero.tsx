@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { TextPlugin } from "gsap/TextPlugin"; // Import the TextPlugin
 import Link from "next/link";
+import Image from 'next/image'; // Import the Image component from next/image
 
 gsap.registerPlugin(ScrollTrigger, TextPlugin);
 
@@ -147,7 +148,7 @@ const HeroSection: React.FC = () => {
                                 className="relative flex flex-col sm:flex-row sm:space-x-4"
                             >
                                 <Link
-                                    href="/report"
+                                    href="https://wu6da488.nocodb.com/#/nc/form/caad5439-7900-4133-91d2-3e7b4c4b3ae5"
                                     className="flex items-center w-full px-6 py-3 mb-3 text-lg text-white bg-indigo-600 rounded-md sm:mb-0 hover:bg-indigo-700 sm:w-auto"
                                 >
                                     Report Incident
@@ -179,7 +180,7 @@ const HeroSection: React.FC = () => {
                             ref={imageRef}
                             className="w-full h-auto overflow-hidden rounded-md shadow-xl sm:rounded-xl"
                         >
-                            <img src="/images/alert.jpg" alt="Hero Image" />
+                            <Image src="/images/alert.jpg" alt="Hero Image" layout="responsive" width={1200} height={800} />
                         </div>
                     </div>
                 </div>

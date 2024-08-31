@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { auth } from '../../firebase/firebase';
 import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import Image from 'next/image'; // Import the Image component from next/image
 
 const SignIn: React.FC = () => {
   const [email, setEmail] = useState<string>('');
@@ -101,7 +102,7 @@ const SignIn: React.FC = () => {
               className="w-full px-4 py-2 text-black bg-white border-2 border-black-500 rounded-md hover:bg-gray-200 focus:outline-none transition duration-200 flex items-center justify-center"
               onClick={handleGoogleLogin}
             >
-              <img src="/images/google.png" alt="Google Icon" className="w-6 h-6 mr-2" />
+              <Image src="/images/google.png" alt="Google Icon" width={24} height={24} className="mr-2" />
               Log in with Google
             </button>
           </div>

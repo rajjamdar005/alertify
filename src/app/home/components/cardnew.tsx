@@ -1,9 +1,115 @@
 "use client";
 import React from "react";
-import Link from "next/link";
-import { CircleArrowUp, CloudSunRain, TriangleAlert, AlertTriangle } from "lucide-react";
 
-export default function Cardnew() {
+import { CornerUpRight, CornerUpLeft, ArrowUp, CircleArrowUp, CloudSunRain, TriangleAlert, AlertTriangle } from "lucide-react";
+
+interface TrafficWidgetProps {
+  directionValues: Direction[];
+  duration?: number;
+}
+
+interface Direction {
+  distance: number;
+  direction: string;
+  to: string;
+  iconType: React.ElementType;
+}
+
+export const trafficDirectionData: Direction[] = [
+  {
+    distance: 350,
+    direction: "right",
+    to: "Gurkha St.",
+    iconType: CornerUpRight,
+  },
+  {
+    distance: 700,
+    direction: "left",
+    to: "Rounding St.",
+    iconType: CornerUpLeft,
+  },
+  {
+    distance: 100,
+    direction: "left",
+    to: "Fulbari marga",
+    iconType: CornerUpLeft,
+  },
+  {
+    distance: 1000,
+    direction: "straight",
+    to: "hwy 16",
+    iconType: ArrowUp,
+  },
+];
+
+const TrafficWidget: React.FC<TrafficWidgetProps> = ({ directionValues = trafficDirectionData, duration = 5000 }) => {
+  const [currentIndex, setCurrentIndex] = React.useState(0);
+  const [iconState, setIconState] = React.useState({
+    prevIconType: directionValues[directionValues.length - 1].iconType,
+    currentIconType: directionValues[0].iconType,
+    nextIconType: directionValues[1].iconType,
+  });
+  const [progress, setProgress] = React.useState(0);
+
+  React.useEffect(() => {
+    const changeDirectionInterval = setInterval(() => {
+      setCurrentIndex((prevIndex) => {
+        const newIndex = (prevIndex + 1) % directionValues.length;
+        const prev = newIndex === 0 ? directionValues[directionValues.length - 1].iconType : directionValues[newIndex - 1].iconType;
+        const next = newIndex === directionValues.length - 1 ? directionValues[0].iconType : directionValues[newIndex + 1].iconType;
+        setIconState({
+          prevIconType: prev,
+          currentIconType: directionValues[newIndex].iconType,
+          nextIconType: next,
+        });
+        return newIndex;
+      });
+      setProgress(0);
+    }, duration);
+
+    const progressIncrement = 100 / (duration / 100);
+    const progressInterval = setInterval(() => {
+      setProgress((prevProgress) => (prevProgress >= 100 ? 100 : prevProgress + progressIncrement));
+    }, 100);
+
+    return () => {
+      clearInterval(changeDirectionInterval);
+      clearInterval(progressInterval);
+    };
+  }, [directionValues, duration]);
+
+  const renderIcon = (IconComponent: React.ElementType, size = 52, color = "text-gray-300") => (
+    <IconComponent size={size} className={color} />
+  );
+
+  const currentDirection = directionValues[currentIndex];
+
+  return (
+    <div className="flex items-center justify-between rounded-lg bg-black p-4 text-white shadow-lg">
+      <div className="flex flex-col items-center justify-center gap-3 w-full">
+        <p className="text-3xl font-bold">
+          {currentDirection.distance}
+          <span className="text-opacity-50">m</span>
+        </p>
+        <p className="animate-pulse">{renderIcon(iconState.currentIconType, 52, "text-white")}</p>
+        <p className="text-md text-center text-gray-400">{currentDirection.to}</p>
+      </div>
+      <div className="flex flex-col items-center justify-center w-[100px]">
+        <div className="relative flex flex-col justify-evenly">
+          <div className="absolute inset-0 shadow" style={{ boxShadow: "inset 0px -30px 20px 0px black" }} />
+          {renderIcon(iconState.prevIconType, 32)}
+          {renderIcon(iconState.currentIconType, 32, "text-green-300")}
+          {renderIcon(iconState.nextIconType, 32)}
+        </div>
+        <div className="flex h-full w-[6px] items-end rounded-xl bg-gray-400">
+          <div className="w-full rounded-xl bg-green-300" style={{ height: `${progress}%` }} />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default function KnowYourLocalitySection() {
   const riskValue = "139 532",
     securityTime = "30m",
     numberOfIssues = 2,
@@ -12,65 +118,71 @@ export default function Cardnew() {
     numberOfAccidents = 3;
 
   return (
-    <div className="bg-yellow-100 flex justify-between items-center gap-6 p-4">
-      {/* Weather Widget */}
-      <div className="flex size-52 flex-col rounded-3xl bg-opacity-10 bg-gradient-to-r from-gray-200 to-gray-300 bg-clip-padding p-4 backdrop-blur-sm backdrop-filter dark:from-gray-700 dark:to-gray-900">
-        <div className="flex flex-1 flex-col gap-2 dark:text-white">
-          <p className="city opacity-70">Tokyo</p>
-          <div className="flex items-center">
-            <CloudSunRain className="h-10 w-10" />
-            <p className="text-5xl font-black">19&deg;</p>
-          </div>
-          <p className="feels-like opacity-70">Feels like 21&deg;</p>
-        </div>
-        <div className="flex justify-between rounded-xl bg-gray-400 bg-opacity-30 bg-clip-padding py-1 backdrop-blur-lg backdrop-filter">
-          <div className="flex items-center gap-1 px-2 text-orange-500 dark:text-orange-200">
-            <CircleArrowUp className="h-5 w-5" />
-            24&deg;
-          </div>
-          <p className="text-black opacity-50">|</p>
-          <div className="flex items-center gap-1 px-3 text-green-800 dark:text-green-200">
-            <CircleArrowUp className="h-5 w-5 rotate-180" />
-            9&deg;
-          </div>
-        </div>
-        
-      </div>
-      
+    <section className="py-16 bg-yellow-100 text-gray-800">
+      <div className="container mx-auto px-4">
+        <h2 className="text-4xl font-bold text-center mb-8">Know Your Locality</h2>
+        <p className="text-lg text-center mb-12 text-gray-600">Stay informed about your surroundings with the latest alerts and updates.</p>
 
-      {/* Security Alert Widget */}
-      <div className="flex size-52 flex-col items-center gap-1 overflow-hidden rounded-3xl bg-black">
-        <div className="h-5 w-full bg-striped" />
-        <div className="flex h-full flex-col gap-1 px-4 pb-4">
-          <div className="mt-1 px-4 text-lg text-gray-300">Security is at Risk</div>
-          <div className="w-full text-center text-2xl font-bold text-white">{riskValue}</div>
-          <div className="my-1 flex w-full flex-1 items-center justify-center gap-2">
-            <div className="text-sm text-gray-400">{securityTime} ago</div>
-            <div className="rounded-lg bg-zinc-600 px-2 py-1 text-sm text-gray-300">Quick scan</div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {/* Weather Widget */}
+          <div className="flex flex-col rounded-lg bg-white p-4 shadow-lg">
+            <div className="flex flex-col gap-2 text-gray-800">
+              <p className="opacity-70">Tokyo</p>
+              <div className="flex items-center">
+                <CloudSunRain className="h-10 w-10 text-blue-500" />
+                <p className="text-5xl font-black">19&deg;</p>
+              </div>
+              <p className="opacity-70">Feels like 21&deg;</p>
+            </div>
+            <div className="flex justify-between rounded-lg bg-gray-200 py-1 mt-2">
+              <div className="flex items-center gap-1 px-2 text-orange-500">
+                <CircleArrowUp className="h-5 w-5" />
+                24&deg;
+              </div>
+              <p className="text-gray-500">|</p>
+              <div className="flex items-center gap-1 px-3 text-green-800">
+                <CircleArrowUp className="h-5 w-5 rotate-180" />
+                9&deg;
+              </div>
+            </div>
           </div>
-          <div className="mt-auto flex animate-blink-red items-center justify-center gap-2 rounded-2xl border-2 border-red-500 px-10 py-2 font-bold">
-            <TriangleAlert className="fill-red-500 stroke-red-800" />
-            <div className="text-red-500">{numberOfIssues} Items</div>
-          </div>
-        </div>
-      </div>
 
-      {/* Accident Alert Widget */}
-      <div className="flex size-52 flex-col items-center gap-1 overflow-hidden rounded-3xl bg-red-900">
-        <div className="h-5 w-full bg-striped bg-gradient-to-r from-red-500 to-yellow-500" />
-        <div className="flex h-full flex-col gap-1 px-4 pb-4">
-          <div className="mt-1 px-4 text-lg text-gray-200">Accident Alert</div>
-          <div className="w-full text-center text-2xl font-bold text-white">{accidentRisk}</div>
-          <div className="my-1 flex w-full flex-1 items-center justify-center gap-2">
-            <div className="text-sm text-gray-300">{accidentTime} ago</div>
-            <div className="rounded-lg bg-red-700 px-2 py-1 text-sm text-gray-100">View details</div>
+          {/* Security Alert Widget */}
+          <div className="flex flex-col rounded-lg bg-red-900 p-4 shadow-lg">
+            <div className="flex flex-col gap-2 text-white">
+              <p className="text-lg">Security Alert</p>
+              <p className="text-4xl font-bold">{riskValue}</p>
+              <div className="flex items-center justify-between mt-2">
+                <p className="text-sm">{securityTime} ago</p>
+                <div className="rounded-lg bg-gray-800 px-3 py-1 text-sm">Quick scan</div>
+              </div>
+              <div className="mt-auto flex items-center justify-center gap-2 rounded-lg border-2 border-red-600 px-10 py-2 font-bold">
+                <TriangleAlert className="fill-red-500 stroke-red-800" />
+                <p className="text-red-500">{numberOfIssues} Items</p>
+              </div>
+            </div>
           </div>
-          <div className="mt-auto flex animate-blink-red items-center justify-center gap-2 rounded-2xl border-2 border-yellow-500 px-10 py-2 font-bold">
-            <AlertTriangle className="fill-yellow-500 stroke-red-800" />
-            <div className="text-yellow-500">{numberOfAccidents} Reported</div>
+
+          {/* Accident Alert Widget */}
+          <div className="flex flex-col rounded-lg bg-yellow-500 p-4 shadow-lg">
+            <div className="flex flex-col gap-2 text-white">
+              <p className="text-lg">Accident Alert</p>
+              <p className="text-4xl font-bold">{accidentRisk}</p>
+              <div className="flex items-center justify-between mt-2">
+                <p className="text-sm">{accidentTime} ago</p>
+                <div className="rounded-lg bg-yellow-700 px-3 py-1 text-sm">View details</div>
+              </div>
+              <div className="mt-auto flex items-center justify-center gap-2 rounded-lg border-2 border-yellow-600 px-10 py-2 font-bold">
+                <AlertTriangle className="fill-yellow-500 stroke-yellow-800" />
+                <p className="text-yellow-500">{numberOfAccidents} Reported</p>
+              </div>
+            </div>
           </div>
+
+          {/* Traffic Widget */}
+          <TrafficWidget directionValues={trafficDirectionData} />
         </div>
       </div>
-    </div>
+    </section>
   );
 }

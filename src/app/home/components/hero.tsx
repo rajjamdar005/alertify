@@ -114,7 +114,7 @@ const HeroSection: React.FC = () => {
                 <span className="block text-indigo-600 xl:inline"> with Alertify</span>
               </h1>
               <p className="mx-auto text-base text-gray-500 sm:max-w-md lg:text-xl md:max-w-3xl">
-                It's never been easier to build beautiful websites that convey your message and tell your story.
+                
               </p>
               <div ref={buttonsRef} className="relative flex flex-col sm:flex-row sm:space-x-4">
                 <Link

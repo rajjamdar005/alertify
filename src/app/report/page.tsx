@@ -36,11 +36,11 @@ const LocateIncident: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto max-w-lg p-8 bg-white shadow-md rounded-md">
-      <h2 className="text-2xl font-bold mb-6">Locate Incident</h2>
+    <div className="container mx-auto max-w-md p-6 bg-gray-50 shadow-lg rounded-lg">
+      <h2 className="text-3xl font-semibold text-gray-800 mb-8">Report an Incident</h2>
       <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+        <div className="mb-6">
+          <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
             Name
           </label>
           <input
@@ -48,32 +48,34 @@ const LocateIncident: React.FC = () => {
             id="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+            placeholder="Enter your name"
           />
         </div>
 
-        <div className="mb-4">
-          <label htmlFor="number" className="block text-sm font-medium text-gray-700">
-            Number
+        <div className="mb-6">
+          <label htmlFor="number" className="block text-sm font-medium text-gray-700 mb-2">
+            Contact Number
           </label>
           <input
             type="text"
             id="number"
             value={number}
             onChange={(e) => setNumber(e.target.value)}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+            placeholder="Enter your contact number"
           />
         </div>
 
-        <div className="mb-4">
-          <label htmlFor="incident" className="block text-sm font-medium text-gray-700">
+        <div className="mb-6">
+          <label htmlFor="incident" className="block text-sm font-medium text-gray-700 mb-2">
             Report Incident <span className="text-red-500">*</span>
           </label>
           <select
             id="incident"
             value={incident}
             onChange={(e) => setIncident(e.target.value)}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className="w-full px-4 py-3 border border-gray-300 bg-white rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
           >
             <option value="">Select an incident</option>
             <option value="theft">Theft</option>
@@ -83,42 +85,43 @@ const LocateIncident: React.FC = () => {
           </select>
         </div>
 
-        <div className="mb-4">
-          <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+        <div className="mb-6">
+          <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
             Description
           </label>
           <textarea
             id="description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            rows={4}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+            rows={5}
+            placeholder="Describe the incident"
           />
         </div>
 
-        <div className="mb-4">
-          <label htmlFor="photo" className="block text-sm font-medium text-gray-700">
-            Photo
+        <div className="mb-6">
+          <label htmlFor="photo" className="block text-sm font-medium text-gray-700 mb-2">
+            Upload Photo
           </label>
           <input
             type="file"
             id="photo"
             onChange={handleFileChange}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
           />
         </div>
 
-        <div className="flex justify-between">
+        <div className="flex justify-between mt-6">
           <button
             type="button"
             onClick={handleClearForm}
-            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200"
+            className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
           >
-            Clear Form
+            Clear
           </button>
           <button
             type="submit"
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
           >
             Submit
           </button>
